@@ -1,0 +1,76 @@
+# Chatbot Carda TC 15 — Assistente Técnico com IA Local
+
+Chatbot com RAG (Retrieval-Augmented Generation) para responder perguntas técnicas sobre a **Carda TC 15 (2017)**, usando Ollama + LangChain + ChromaDB. Tudo roda localmente — sem internet necessária após a configuração.
+
+## Estrutura do projeto
+
+```
+chatbot-carda/
+├── backend/
+│   ├── main.py           ← Servidor FastAPI com RAG
+│   ├── ingest.py         ← Script que processa o PDF
+│   └── requirements.txt  ← Dependências Python
+├── frontend/
+│   └── index.html        ← Interface do chatbot
+├── data/
+   └── Carda TC 15_2017_Informação.pdf  ← COLOQUE O PDF AQUI
+```
+
+
+## Instalação passo a passo
+
+1- Instale o Ollama na máquina: https://ollama.com/download/windows
+
+
+2- Neste projeto, estamos utilizando o llama3. Portanto, baixe os modelos:
+ollama run llama3
+ollama pull nomic-embed-text
+
+> `llama3` é o modelo de linguagem principal.
+> `nomic-embed-text` é o modelo de embeddings (leve e rápido).
+
+
+3- Instale as dependências Python:
+cd backend
+pip install -r requirements.txt
+
+
+4- Processe o PDF (rodar UMA VEZ)
+cd backend
+python ingest.py
+
+> Este script vai:
+- Ler o PDF
+- Dividir em pedaços (chunks)
+- Gerar os embeddings com o Ollama
+- Salvar o banco vetorial em `backend/chroma_db/`
+
+
+5- Inicie o servidor
+cd backend
+uvicorn main:app --reload
+
+O servidor sobe em: **http://localhost:8000**
+
+
+6- Abra o chatbot
+Acesse http://localhost:8000/ 
+
+
+###É DE EXTREMA IMPORTÂNCIA QUE O PDF NA PASTA `data/` NÃO TENHA ALTERAÇÃO DE NOME.
+
+O arquivo deve ter exatamente este título:
+```
+data/Carda TC 15_2017_Informação.pdf
+
+
+
+## Problemas que podem acontecer:
+
+| Problema | Solução |
+|---|---|
+| `chroma_db não encontrado` | Rode `python ingest.py` primeiro |
+| `Connection refused` | Inicie o servidor com `uvicorn main:app` |
+| `Ollama não responde` | Verifique se o Ollama está rodando (`ollama serve`) |
+| `PDF não encontrado` | Confirme o caminho: `data/Carda TC 15_2017_Informação.pdf` |
+

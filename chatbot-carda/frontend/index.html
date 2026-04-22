@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carda TC 15 — Assistente Técnico</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --rose-950: #0e050a;
+      --rose-900: #180a11;
+      --rose-800: #2a1020;
+      --rose-700: #3f1530;
+      --rose-600: #6b1e45;
+      --rose-500: #9b2555;
+      --rose-400: #c42e67;
+      --rose-300: #e05585;
+      --rose-200: #f09ab8;
+      --rose-100: #fad4e4;
+      --rose-50:  #fff0f6;
+
+      --black:    #080406;
+      --surface:  #110810;
+      --panel:    #1a0f16;
+      --border:   #2e1525;
+      --border2:  #4a1e35;
+
+      --text-primary:   #f5dce8;
+      --text-secondary: #b87899;
+      --text-muted:     #6a3a52;
+
+      --font-display: 'Syne', sans-serif;
+      --font-mono:    'DM Mono', monospace;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--black);
+      color: var(--text-primary);
+      font-family: var(--font-display);
+      overflow: hidden;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      grid-template-rows: 100vh;
+      height: 100vh;
+    }
+
+    /* sidebar */
+    .sidebar {
+      background: var(--rose-950);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-logo {
+      padding: 28px 20px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--rose-800);
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      padding: 10px 14px;
+      width: 100%;
+    }
+
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: var(--rose-600);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .logo-icon svg { width: 20px; height: 20px; fill: var(--rose-100); }
+
+    .logo-text { line-height: 1.2; }
+    .logo-name { font-size: 14px; font-weight: 700; color: var(--rose-100); letter-spacing: 0.02em; }
+    .logo-model { font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); }
+
+    /* status indicator */
+    .status-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--rose-400);
+      box-shadow: 0 0 8px var(--rose-500);
+      animation: blink 2.4s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    .status-dot.offline { background: #444; box-shadow: none; animation: none; }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    .status-text { font-size: 12px; color: var(--text-secondary); font-family: var(--font-mono); }
+
+    /* Quick topics */
+    .sidebar-section {
+      padding: 16px 20px 8px;
+    }
+
+    .sidebar-section-title {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 10px;
+    }
+
+    .topic-btn {
+      display: flex; align-items: center; gap: 10px;
+      width: 100%;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 9px 12px;
+      cursor: pointer;
+      font-family: var(--font-display);
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-align: left;
+      transition: all 0.18s;
+      margin-bottom: 2px;
+    }
+
+    .topic-btn:hover {
+      background: var(--rose-800);
+      border-color: var(--border2);
+      color: var(--rose-100);
+    }
+
+    .topic-btn svg {
+      width: 15px; height: 15px;
+      fill: var(--rose-500);
+      flex-shrink: 0;
+    }
+
+    /* footer do sidebar */
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .doc-chip {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--rose-900);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+
+    .doc-chip-icon {
+      width: 28px; height: 28px;
+      background: var(--rose-700);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .doc-chip-icon svg { width: 14px; height: 14px; fill: var(--rose-200); }
+    .doc-chip-name { font-size: 11px; color: var(--rose-200); font-family: var(--font-mono); line-height: 1.4; }
+    .doc-chip-sub  { font-size: 10px; color: var(--text-muted); }
+
+    /* geral main*/
+    .main {
+      display: flex;
+      flex-direction: column;
+      background: var(--surface);
+      overflow: hidden;
+    }
+
+    /* header */
+    .chat-header {
+      padding: 18px 28px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--rose-950);
+      flex-shrink: 0;
+    }
+
+    .chat-header-left { display: flex; flex-direction: column; gap: 2px; }
+    .chat-header-title { font-size: 17px; font-weight: 700; color: var(--rose-100); }
+    .chat-header-sub   { font-size: 12px; color: var(--text-muted); font-family: var(--font-mono); }
+
+    .header-tag {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--rose-300);
+      background: var(--rose-800);
+      border: 1px solid var(--border2);
+      border-radius: 20px;
+      padding: 4px 12px;
+    }
+
+    /* mensagemns */
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 28px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border2) transparent;
+    }
+
+    .messages::-webkit-scrollbar { width: 4px; }
+    .messages::-webkit-scrollbar-track { background: transparent; }
+    .messages::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+    .msg-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      animation: fadeUp 0.22s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .msg-row.user { flex-direction: row-reverse; }
+
+    .avatar {
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+      font-family: var(--font-mono);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .avatar.bot  { background: var(--rose-800); color: var(--rose-300); border: 1px solid var(--border2); }
+    .avatar.user { background: var(--rose-500); color: white; }
+
+    .msg-body { max-width: 68%; display: flex; flex-direction: column; gap: 6px; }
+    .msg-row.user .msg-body { align-items: flex-end; }
+
+    .msg-label {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+
+    .bubble {
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .bubble.bot {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      border-top-left-radius: 4px;
+    }
+
+    .bubble.user {
+      background: var(--rose-600);
+      color: var(--rose-50);
+      border-top-right-radius: 4px;
+    }
+
+    .bubble strong { color: var(--rose-200); font-weight: 600; }
+    .bubble em     { color: var(--text-secondary); font-style: italic; }
+
+
+
+
+    .sources {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-top: 4px;
+    }
+
+    .source-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--rose-900);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+    }
+
+    .source-chip span.pg {
+      background: var(--rose-700);
+      color: var(--rose-200);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-size: 10px;
+    }
+
+
+    
+
+
+    .typing-row { display: flex; gap: 12px; align-items: center; animation: fadeUp 0.22s ease both; }
+
+    .typing-bubble {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      border-top-left-radius: 4px;
+      padding: 14px 18px;
+      display: flex; gap: 5px; align-items: center;
+    }
+
+    .typing-bubble span {
+      width: 7px; height: 7px;
+      background: var(--rose-500);
+      border-radius: 50%;
+      animation: typingPulse 1.3s infinite;
+    }
+
+    .typing-bubble span:nth-child(2) { animation-delay: 0.18s; }
+    .typing-bubble span:nth-child(3) { animation-delay: 0.36s; }
+
+    @keyframes typingPulse {
+      0%, 60%, 100% { opacity: 0.2; transform: scale(0.75); }
+      30%           { opacity: 1;   transform: scale(1); }
+    }
+
+    /* input */
+    .input-area {
+      padding: 20px 28px;
+      background: var(--rose-950);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--panel);
+      border: 1px solid var(--border2);
+      border-radius: 14px;
+      padding: 6px 6px 6px 16px;
+      transition: border-color 0.2s;
+    }
+
+    .input-wrapper:focus-within { border-color: var(--rose-500); }
+
+    .chat-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-primary);
+      font-family: var(--font-display);
+      font-size: 14px;
+      line-height: 1.5;
+      resize: none;
+      max-height: 100px;
+    }
+
+    .chat-input::placeholder { color: var(--text-muted); }
+
+    .send-btn {
+      width: 40px; height: 40px;
+      background: var(--rose-500);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.18s;
+      flex-shrink: 0;
+    }
+
+    .send-btn:hover   { background: var(--rose-400); transform: scale(1.06); }
+    .send-btn:active  { transform: scale(0.96); }
+    .send-btn:disabled { background: var(--border2); cursor: not-allowed; transform: none; }
+    .send-btn svg { width: 17px; height: 17px; fill: white; }
+
+    .input-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      text-align: center;
+      margin-top: 10px;
+    }
+
+
+
+    .welcome {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      gap: 12px;
+      padding: 32px;
+      text-align: center;
+    }
+
+    .welcome-icon {
+      width: 64px; height: 64px;
+      background: var(--rose-800);
+      border: 1px solid var(--border2);
+      border-radius: 18px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 6px;
+    }
+
+    .welcome-icon svg { width: 32px; height: 32px; fill: var(--rose-300); }
+
+    .welcome h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--rose-100);
+    }
+
+    .welcome p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      max-width: 380px;
+      line-height: 1.7;
+    }
+
+    .welcome-chips {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      justify-content: center;
+      margin-top: 8px;
+    }
+
+    .welcome-chip {
+      background: var(--rose-800);
+      border: 1px solid var(--border2);
+      border-radius: 20px;
+      padding: 7px 16px;
+      font-size: 13px;
+      color: var(--rose-200);
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+
+    .welcome-chip:hover {
+      background: var(--rose-700);
+      color: var(--rose-50);
+      border-color: var(--rose-500);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #3b0a0a;
+      border: 1px solid #7a1a1a;
+      color: #fca5a5;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: var(--font-mono);
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-badge">
+        <div class="logo-icon">
+          <!-- gear icon -->
+          <svg viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 018.5 12 3.5 3.5 0 0112 8.5a3.5 3.5 0 013.5 3.5 3.5 3.5 0 01-3.5 3.5m7.43-2.92c.04-.36.07-.73.07-1.08s-.03-.73-.07-1.08l2.33-1.82c.21-.16.27-.46.13-.7l-2.2-3.82c-.13-.24-.42-.32-.65-.24l-2.75 1.11c-.57-.44-1.18-.8-1.85-1.07L14.5 2.42c-.04-.26-.27-.42-.5-.42h-4c-.24 0-.46.16-.5.42l-.42 2.93c-.67.27-1.28.63-1.85 1.07L4.48 5.31c-.24-.08-.52 0-.65.24L1.63 9.37c-.14.24-.07.54.13.7l2.33 1.82c-.04.35-.07.72-.07 1.08s.03.73.07 1.08L1.76 15.87c-.2.16-.27.46-.13.7l2.2 3.82c.13.24.41.32.65.24l2.75-1.11c.57.44 1.17.8 1.85 1.07l.42 2.93c.04.26.26.42.5.42h4c.23 0 .46-.16.5-.42l.42-2.93c.67-.27 1.28-.63 1.85-1.07l2.75 1.11c.23.08.52 0 .65-.24l2.2-3.82c.14-.24.07-.54-.13-.7l-2.33-1.82z"/></svg>
+        </div>
+        <div class="logo-text">
+          <div class="logo-name">Carda TC 15</div>
+          <div class="logo-model">Assistente Técnico · 2017</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <div class="status-dot" id="statusDot"></div>
+      <span class="status-text" id="statusText">verificando...</span>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Tópicos rápidos</div>
+
+      <button class="topic-btn" onclick="quickAsk('Quais são as especificações técnicas da Carda TC 15?')">
+        <svg viewBox="0 0 24 24"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
+        Especificações técnicas
+      </button>
+
+      <button class="topic-btn" onclick="quickAsk('Como realizar a manutenção preventiva da Carda TC 15?')">
+        <svg viewBox="0 0 24 24"><path d="M13.78 15.3L19.78 21.3L21.89 19.14L15.89 13.14L13.78 15.3M17.5 11.5C17.78 11.5 18.08 11.47 18.35 11.4L12.56 17.19L10.03 14.66L11.06 13.63L12.56 15.13L15.45 12.24C15.21 11.74 15.08 11.18 15.08 10.6C15.08 9.63 15.46 8.71 16.14 8.03C17.09 7.08 18.5 6.79 19.74 7.21L17.75 9.2L19.5 10.95L21.5 8.95C22 10.2 21.71 11.61 20.76 12.56C20.14 13.18 19.27 13.56 18.35 13.56L17.5 11.5M7.93 13.12L3 8.17L4.12 7.05L7.07 10L9.11 7.96L6.16 5.01L7.28 3.89L12.23 8.84L10.09 10.98L8.31 9.2L7.28 10.23L8.97 11.92L7.93 13.12Z"/></svg>
+        Manutenção preventiva
+      </button>
+
+      <button class="topic-btn" onclick="quickAsk('Como operar corretamente a Carda TC 15? Quais os passos de operação?')">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        Operação da máquina
+      </button>
+
+      <button class="topic-btn" onclick="quickAsk('Quais são as falhas mais comuns da Carda TC 15 e como resolver?')">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        Resolução de falhas
+      </button>
+
+      <button class="topic-btn" onclick="quickAsk('Quais são os dispositivos de segurança da Carda TC 15?')">
+        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+        Segurança
+      </button>
+
+      <button class="topic-btn" onclick="quickAsk('Quais são os componentes e peças principais da Carda TC 15?')">
+        <svg viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 21h2.13c.7-1.2 1.5-2.4 2.38-3.44C9.71 19.12 12 20 12 20c0 0 4-11 10-6.39C21.5 9 17 8 17 8z"/></svg>
+        Componentes e peças
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="doc-chip">
+        <div class="doc-chip-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/></svg>
+        </div>
+        <div>
+          <div class="doc-chip-name">Carda TC 15_2017</div>
+          <div class="doc-chip-sub">Informação.pdf · base ativa</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <main class="main">
+    <div class="chat-header">
+      <div class="chat-header-left">
+        <div class="chat-header-title">Assistente Técnico</div>
+        <div class="chat-header-sub">Ollama · llama3 · RAG / ChromaDB</div>
+      </div>
+      <div class="header-tag">Carda TC 15 · 2017</div>
+    </div>
+
+    <!-- Messages container -->
+    <div class="messages" id="messages">
+
+      <!-- Welcome state (removido ao 1º msg) -->
+      <div class="welcome" id="welcome">
+        <div class="welcome-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2a2 2 0 012 2v1h3a2 2 0 012 2v10a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h3V4a2 2 0 012-2zm0 2v1h4V6H8v1h8V7H8v1h8V9H8v1h8v-1zm-5 4v1h10v-1H7zm0 3v1h7v-1H7z"/></svg>
+        </div>
+        <h2>Olá, como posso ajudar?</h2>
+        <p>Sou especialista na <strong>Carda TC 15</strong>. Faça qualquer pergunta técnica sobre operação, manutenção, peças ou resolução de falhas.</p>
+        <div class="welcome-chips">
+          <div class="welcome-chip" onclick="quickAsk('Quais são as especificações técnicas da Carda TC 15?')">Especificações</div>
+          <div class="welcome-chip" onclick="quickAsk('Como realizar a lubrificação da máquina?')">Lubrificação</div>
+          <div class="welcome-chip" onclick="quickAsk('Como ajustar o espaçamento entre cilindros?')">Ajustes</div>
+          <div class="welcome-chip" onclick="quickAsk('Quais os itens de segurança da máquina?')">Segurança</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Input -->
+    <div class="input-area">
+      <div class="input-wrapper">
+        <textarea
+          class="chat-input"
+          id="chatInput"
+          placeholder="Pergunte sobre a Carda TC 15..."
+          rows="1"
+          onkeydown="handleKey(event)"
+          oninput="autoResize(this)"
+        ></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+          <!-- send icon -->
+          <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
+      </div>
+      <div class="input-hint">Enter para enviar · Shift+Enter para nova linha</div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const API_BASE = 'http://localhost:8000';
+  let isLoading  = false;
+
+  async function checkHealth() {
+    try {
+      const r    = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(3000) });
+      const data = await r.json();
+      const dot  = document.getElementById('statusDot');
+      const txt  = document.getElementById('statusText');
+      if (data.rag_ready) {
+        dot.classList.remove('offline');
+        txt.textContent = 'sistema online · rag ativo';
+      } else {
+        dot.classList.add('offline');
+        txt.textContent = 'ingest.py pendente';
+      }
+    } catch {
+      document.getElementById('statusDot').classList.add('offline');
+      document.getElementById('statusText').textContent = 'servidor offline';
+    }
+  }
+
+  checkHealth();
+  setInterval(checkHealth, 15000);
+
+  // ── UI helpers ─────────────────────────────────────────────
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  function scrollBottom() {
+    const m = document.getElementById('messages');
+    m.scrollTop = m.scrollHeight;
+  }
+
+  function removeWelcome() {
+    const w = document.getElementById('welcome');
+    if (w) w.remove();
+  }
+
+  // ── Add message bubble ─────────────────────────────────────
+  function addMessage(text, role, sources) {
+    const msgs = document.getElementById('messages');
+
+    const row  = document.createElement('div');
+    row.className = `msg-row ${role}`;
+
+    const av   = document.createElement('div');
+    av.className = `avatar ${role}`;
+    av.textContent = role === 'bot' ? 'TC' : 'EU';
+
+    const body = document.createElement('div');
+    body.className = 'msg-body';
+
+    const label = document.createElement('div');
+    label.className = 'msg-label';
+    label.textContent = role === 'bot' ? 'Assistente Carda TC 15' : 'Você';
+
+    const bub  = document.createElement('div');
+    bub.className = `bubble ${role}`;
+    bub.innerHTML = formatText(text);
+
+    body.appendChild(label);
+    body.appendChild(bub);
+
+    // Sources
+    if (sources && sources.length > 0) {
+      const srcDiv = document.createElement('div');
+      srcDiv.className = 'sources';
+      sources.forEach(s => {
+        const chip = document.createElement('div');
+        chip.className = 'source-chip';
+        chip.innerHTML = `<span class="pg">pág. ${s.page}</span> ${truncate(s.snippet, 60)}`;
+        srcDiv.appendChild(chip);
+      });
+      body.appendChild(srcDiv);
+    }
+
+    row.appendChild(av);
+    row.appendChild(body);
+    msgs.appendChild(row);
+    scrollBottom();
+  }
+
+  function formatText(t) {
+    return t
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/\n/g, '<br>');
+  }
+
+  function truncate(str, n) {
+    return str.length > n ? str.slice(0, n) + '…' : str;
+  }
+
+  // ── Typing indicator ───────────────────────────────────────
+  function showTyping() {
+    const msgs = document.getElementById('messages');
+    const row  = document.createElement('div');
+    row.id = 'typing';
+    row.className = 'typing-row';
+    row.innerHTML  = `
+      <div class="avatar bot">TC</div>
+      <div class="typing-bubble">
+        <span></span><span></span><span></span>
+      </div>`;
+    msgs.appendChild(row);
+    scrollBottom();
+  }
+
+  function hideTyping() {
+    const t = document.getElementById('typing');
+    if (t) t.remove();
+  }
+
+  // ── Send message ───────────────────────────────────────────
+  async function sendMessage() {
+    if (isLoading) return;
+    const input = document.getElementById('chatInput');
+    const text  = input.value.trim();
+    if (!text) return;
+
+    removeWelcome();
+    isLoading = true;
+    document.getElementById('sendBtn').disabled = true;
+    input.value = '';
+    input.style.height = 'auto';
+
+    addMessage(text, 'user');
+    showTyping();
+
+    try {
+      const res  = await fetch(`${API_BASE}/chat`, {
+        method : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body   : JSON.stringify({ question: text })
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || `Erro HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+      hideTyping();
+      addMessage(data.answer, 'bot', data.sources);
+
+    } catch (err) {
+      hideTyping();
+      const msg = err.message.includes('fetch')
+        ? 'Servidor offline. Verifique se o backend está rodando em localhost:8000.'
+        : err.message;
+      showToast(msg);
+      addMessage('Não foi possível obter resposta. ' + msg, 'bot', []);
+    }
+
+    isLoading = false;
+    document.getElementById('sendBtn').disabled = false;
+    input.focus();
+  }
+
+  // ── Quick ask from sidebar/chips ───────────────────────────
+  function quickAsk(question) {
+    const input = document.getElementById('chatInput');
+    input.value = question;
+    sendMessage();
+  }
+</script>
+</body>
+</html>
