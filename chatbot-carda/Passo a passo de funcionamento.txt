@@ -19,10 +19,14 @@ chatbot-carda/
 
 ## Instalação passo a passo
 
-1- Instale o Ollama na máquina: https://ollama.com/download/windows
+01- Instale o Ollama na máquina: https://ollama.com/download/windows
 
 
-2- Neste projeto, estamos utilizando o llama3. Portanto, baixe os modelos:
+02- Adicione ele ao Path do PC/Notbook:
+$env:PATH += ";C:\Users\$env:USERNAME\AppData\Local\Programs\Ollama"
+
+
+03- Neste projeto, estamos utilizando o llama3. Portanto, baixe os modelos:
 ollama run llama3
 ollama pull nomic-embed-text
 
@@ -30,12 +34,12 @@ ollama pull nomic-embed-text
 > `nomic-embed-text` é o modelo de embeddings (leve e rápido).
 
 
-3- Instale as dependências Python:
+04- Instale as dependências Python:
 cd backend
 pip install -r requirements.txt
 
 
-4- Processe o PDF (rodar UMA VEZ)
+05- Processe o PDF (rodar UMA VEZ)
 cd backend
 python ingest.py
 
@@ -46,14 +50,14 @@ python ingest.py
 - Salvar o banco vetorial em `backend/chroma_db/`
 
 
-5- Inicie o servidor
+06- Inicie o servidor
 cd backend
 uvicorn main:app --reload
 
 O servidor sobe em: **http://localhost:8000**
 
 
-6- Abra o chatbot
+07- Abra o chatbot
 Acesse http://localhost:8000/ 
 
 
@@ -67,10 +71,10 @@ data/Carda TC 15_2017_Informação.pdf
 
 ## Problemas que podem acontecer:
 
-| Problema | Solução |
-|---|---|
-| `chroma_db não encontrado` | Rode `python ingest.py` primeiro |
-| `Connection refused` | Inicie o servidor com `uvicorn main:app` |
-| `Ollama não responde` | Verifique se o Ollama está rodando (`ollama serve`) |
-| `PDF não encontrado` | Confirme o caminho: `data/Carda TC 15_2017_Informação.pdf` |
+|	 Problema 		     |		       	    Solução 	    		   	  |
+___________________________________________________________________________________________________
+|      `chroma_db não encontrado`    |  	      Rode `python ingest.py` primeiro            |
+|       `Connection refused`         | 		   Inicie o servidor com `uvicorn main:app`       |
+|       `Ollama não responde`        |     Verifique se o Ollama está rodando (`ollama serve`)    |
+|       `PDF não encontrado`         | Confirme o caminho: `data/Carda TC 15_2017_Informação.pdf` |
 
